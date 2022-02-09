@@ -1,57 +1,63 @@
-import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import SearchBar from './src/components/SearchBar';
 
-export default class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      searchData: '',
-      dataWeather: [],
-      dataCity: {}
+
+const App = () => {
+
+  const [weather, setWeather] = useState()
+  const [main, setMain] = useState([])
+  const [data, setData] = useState([])
+  const getData = async () => {
+    try {
+      const result = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+        params: {
+          q: 'jakarta',
+          appid: '9de173c630a48a58999180c48427d169',
+          units: 'metric'
+        }
+      })
+      console.log(result)
+      setWeather(result.data.weather)
+      setMain(result.data.main)
+      setData(result.data)
+    } catch (error) {
+      // alert.alert(error.message)
     }
   }
 
-  getData = () => {
-    fetch('https://api.openweathermap.org/data/2.5/weather?appid=9de173c630a48a58999180c48427d169&q=' + this.state.searchData)
-      .then((respons) => respons.json())
-      .then((json) => this.setState({ dataWeather: json.weather, }, () => console.log(json)))
-      .catch((error) => console.log(error))
-  }
+  useEffect(() => {
+    getData()
+  }, [])
 
-  
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <View style={{ backgroundColor: 'black', height: 100, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontSize: 30, color: 'white' }}>Weather App</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <View style={{ paddingTop: 15, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 }}>
-            <TextInput
-              style={{ borderWidth: 1, flex: 1, paddingHorizontal: 10, borderRadius: 10 }}
-              placeholder='Type city name'
-              onChangeText={(value) => this.setState({ searchData: value })}
-            />
-            <TouchableOpacity style={{ paddingLeft: 10 }} onPress={() => this.getData()}>
-              <Text>CARI!</Text>
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            data={this.state.dataWeather}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => (
-              <View style={{ flexDirection: 'row', paddingBottom: 10, padding: 10 }}>
-                {/* <Image source={{ uri: item.urlToImage }} style={{ height: 150, width: 100 }} /> */}
-                <View style={{ paddingLeft: 10 }}>
-                  <Text>{item.main}</Text>
-                  <Text>{item.id}</Text>
-                </View>
-              </View>
-            )}
-            />
-            <Text>{main.temp}</Text>
-        </View>
+
+  return (
+    <>
+      {/* {console.log(data)} */}
+      <View>
+        <SearchBar />
       </View>
-    )
-  }
-}
+      {weather && weather.map((item, index) => {
+        return <>
+          <View style={{ alignItems: 'center', justifyContent: 'center'}}>
+         
+          <Text>{main.temp}</Text>
+            <Text>{item.description}</Text>
+            <Text>{item.id}</Text>
+            <Image style={{ width: 50, height: 50 }} source={{ uri: `http://openweathermap.org/img/w/${item.icon}.png` }} />
+          </View>
+        </>
+      })}
+      <View style={{alignItems: 'center'}}>
+        <Text>{main.humidity}</Text>
+        <Text>{data.name}</Text>
+        <Text>{data.weather.id}</Text>
+      </View>
+    </>
+  );
+};
+
+export default App;
+
+const styles = StyleSheet.create({});
