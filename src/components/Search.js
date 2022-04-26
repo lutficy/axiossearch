@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { IconSearch } from '../../assets/bakcgroundImages/Icon'
 
 
-const SearchBar = ({ fetchWeatherData }) => {
+const SearchComponent = ({ fetchWeatherData }) => {
 
     const [cityName, setCityName] = useState('')
 
@@ -16,13 +16,14 @@ const SearchBar = ({ fetchWeatherData }) => {
                 value={cityName}
                 onChangeText={(text) => setCityName(text)} />
             <TouchableOpacity onPress={() => fetchWeatherData(cityName)}>
-                <IconSearch />
-            </TouchableOpacity> 
+                {/* <IconSearch /> */}
+                <Text>Cari!</Text>
+            </TouchableOpacity>
         </View>
     )
 }
 
-export default SearchBar
+export default SearchComponent
 
 const styles = StyleSheet.create({
     searchwrapper: {
